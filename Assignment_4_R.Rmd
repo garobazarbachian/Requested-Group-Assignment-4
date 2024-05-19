@@ -1,0 +1,54 @@
+---
+title: "Monte Carlo Simulation to Estimate Pi"
+author: "James Kwok"
+date: "2024-05-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r test1a}
+estimate_pi <- function(num_samples) {
+  points_inside_circle <- 0
+  
+  for (i in 1:num_samples) {
+    x <- runif(1, -1, 1)
+    y <- runif(1, -1, 1)
+    
+    # Check if the point (x, y) is inside the unit circle
+    if (x^2 + y^2 <= 1) {
+      points_inside_circle <- points_inside_circle + 1
+    }
+  }
+  
+  # Estimate pi as the ratio of points inside the circle to total points, multiplied by 4
+  pi_estimate <- 4 * points_inside_circle / num_samples
+  return(pi_estimate)
+}
+
+main <- function() {
+  sample_sizes <- c(100, 1000, 10000, 100000, 1000000, 10000000, 100000000)
+  real_pi <- pi
+  
+  for (num_samples in sample_sizes) {
+    start_time <- Sys.time()
+    
+    estimated_pi <- estimate_pi(num_samples)
+    
+    end_time <- Sys.time()
+    elapsed_time <- as.numeric(difftime(end_time, start_time, units = "secs"))
+    error_percent <- abs((estimated_pi - real_pi) / real_pi) * 100
+    
+    cat("Samples:", num_samples, "\n")
+    cat("Estimated value of pi:", sprintf("%.100f", estimated_pi), "\n")
+    cat("Error percent:", format(error_percent, digits = 10), "%\n")
+    cat("Elapsed time:", format(elapsed_time, digits = 4), "seconds\n")
+    cat(rep("-", 60), "\n")
+  }
+}
+
+main()
+
+```
